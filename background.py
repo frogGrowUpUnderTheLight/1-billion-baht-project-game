@@ -1,31 +1,31 @@
 import pygame, math
 
 class Background:
-    def __init__(self, background):
-        self.speed = 10
+    def __init__(self, screen):
         self.x = 0
         self.y = 0
-        self.angle = 90
-        self.background = background
-        self.image = pygame.image.load('./assets/maps/stage0.jpg')
-        self.image = pygame.transform.scale(self.image, (1080, 720));
+        self.screen = screen
+        self.image = pygame.image.load('./assets/maps/test_background.png')
 
-    def move(self, direction, reset):
-        reset()
-        if direction == 'up': self.calculateNewPosition(self.angle + 180)
-        elif direction == 'down': self.calculateNewPosition(self.angle)
-        elif direction == 'left': self.calculateNewPosition(self.angle - 90 )
-        elif direction == 'right': self.calculateNewPosition(self.angle + 90)
-        self.render()
+        # Get screen broundaries
+        image_rect = self.image.get_rect();
+        screen_rect = screen.get_rect();
+        self.boundaries = tuple(map(lambda i, j: (i - j) * -1, image_rect, screen_rect))
 
     def render(self):
-        image = pygame.transform.rotate(self.image, self.angle - 90)
-        self.background.blit(image, (self.x, self.y))
+        self.screen.blit(self.image, (self.x, self.y))
 
-
-    def calculateNewPosition(self, heading):
+    def calculateNewPosition(self, heading, speed):
         if heading >= 360: heading = heading - 360
         elif heading < 0: heading = heading + 360
         radians = math.radians(heading)
-        self.x = self.x + self.speed * math.cos(radians)
-        self.y = self.y - self.speed * math.sin(radians)
+        self.x = self.x + speed * math.cos(radians)
+        self.y = self.y - speed * math.sin(radians)
+
+        # Make sure the background does not go off screen
+        if (self.x > self.boundaries[0]): self.x = self.boundaries[0]
+        if (self.x < self.boundaries[2]): self.x = self.boundaries[2]
+        if (self.y > self.boundaries[1]): self.y = self.boundaries[1]
+        if (self.y < self.boundaries[3]): self.y = self.boundaries[3]
+
+        return (self.x, self.y)
