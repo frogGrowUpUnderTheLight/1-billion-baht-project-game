@@ -9,7 +9,7 @@ open = True
 pygame.display.set_caption('LUBU HORSE WORLD!!!')
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
-state = 'start'
+state = 'game'
 
 BG_COLOR = 250,250,250
 font = pygame.font.Font(None, 36)
@@ -37,7 +37,7 @@ exitButton = Button('Quit', 300, 250)
 disabled = Button('Disabled', 300, 300)
 disabled.disable()
 
-
+stateHeldKeySpace = False
 while open:
     clock.tick(60)
     for event in pygame.event.get():
@@ -52,6 +52,16 @@ while open:
         if pressed[pygame.K_RIGHT] : player.move('right')
         if pressed[pygame.K_e] : player.turn('right')
         if pressed[pygame.K_q] : player.turn('left')
+        if pressed[pygame.K_r] : player.reset()
+
+        if pressed[pygame.K_SPACE]:
+            if not stateHeldKeySpace:
+                stateHeldKeySpace = True
+                player.jump()
+        elif stateHeldKeySpace:
+                stateHeldKeySpace = False
+
+
         background.render()
         player.render()
 
